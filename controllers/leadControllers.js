@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import leadModel from "../models/lead.model.js";
+import salesAgentModel from "../models/salesAgent.model.js";
 
 // creates new lead
 const leadCreation = async (req, res) => {
@@ -16,6 +17,7 @@ const leadCreation = async (req, res) => {
     };
 
     const missingFields = Object.keys(fields).filter((k) => !req.body[k]);
+
     if (missingFields.length) {
       return res.status(400).json({
         success: false,
@@ -26,7 +28,7 @@ const leadCreation = async (req, res) => {
 
     let salesAgentData = null;
     if (salesAgent) {
-      salesAgentData = await leadModel.findById(salesAgent);
+      salesAgentData = await salesAgentModel.findById(salesAgent);
 
       if (!salesAgentData) {
         return res.status(404).json({
@@ -45,6 +47,7 @@ const leadCreation = async (req, res) => {
       timeToClose,
       priority,
     });
+    await newLead.save();
 
     res.status(201).json({
       success: true,
@@ -68,11 +71,11 @@ const allowedStatus = [
 ];
 const allowedSources = ["Referral", "Website", "Cold Call", "Social Media"];
 const getAllLeads = async (req, res) => {
-  const { salesAgent, status, source } = req.query;
+  const { salesAgent, status, source, tags } = req.query;
   try {
     let filter = {};
     if (salesAgent) {
-      if (!mongoose.Types.ObjectId(salesAgent)) {
+      if (!mongoose.Types.ObjectId.isValid(salesAgent)) {
         return res.status(400).json({
           success: false,
           error: "Invalid query: 'salesAgent' must be a valid ObjectId.",
@@ -93,7 +96,7 @@ const getAllLeads = async (req, res) => {
     }
 
     if (source) {
-      if (allowedSources.includes(source)) {
+      if (!allowedSources.includes(source)) {
         return res.status(400).json({
           success: false,
           error: `Invalid input: 'source' must be one of ${JSON.stringify(
@@ -129,5 +132,61 @@ const getAllLeads = async (req, res) => {
 };
 
 // Updated a lead
+const leadUpdate = async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
 
-export { leadCreation, getAllLeads };
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, error: `Invalid lead ID ${id}.` });
+    }
+
+    const updatedLead = await leadModel.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+
+    if (!updatedLead) {
+      return res
+        .status(400)
+        .json({ success: false, error: `Lead with ID ${id} not found.` });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Lead data of ID ${id} successfully updated.`,
+      updatedLead,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server Error", error: error.message });
+  }
+};
+
+const leadDelete = async (req, res) => {
+  const { id } = req.params;
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, error: `Invalid lead ID ${id}.` });
+    }
+    const deleatedLead = await leadModel.findByIdAndDelete(id);
+
+    if (!deleatedLead) {
+      res.status(404).json(`Lead with this ${id} id not found!`);
+    }
+
+    res
+      .status(200)
+      .json({ message: "Lead deleted successfully!", deleatedLead });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+export { leadCreation, getAllLeads, leadUpdate, leadDelete };
