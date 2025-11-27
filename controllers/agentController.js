@@ -58,8 +58,8 @@ const getAllSalesAgent = async (req, res) => {
     }
     res.status(200).json({
       success: true,
-      message: "Agent data fetched successfully",
-      data: { agent: newAgent },
+      message: "Agents data fetched successfully",
+      data: { Agents: allAgents },
     });
   } catch (error) {
     return res.status(500).json({

@@ -59,7 +59,7 @@ const addComment = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: "Internal Server Error",
       error: error.message,
@@ -68,11 +68,9 @@ const addComment = async (req, res) => {
 };
 
 const getAllCommentsForLead = async (req, res) => {
+  const { id } = req.params;
   try {
   } catch (error) {}
 };
-
-
-
 
 export { addComment, getAllCommentsForLead };

@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 import leadRoutes from "./routes/leadRoutes.js";
-import salesRoutes from "./routes/salesRoutes.js";
+import salesRoutes from "./routes/agentRoutes.js";
 import commentsRoutes from "./routes/commentsRoutes.js";
 import reportingRoutes from "./routes/reportingRoutes.js";
 

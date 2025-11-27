@@ -165,6 +165,7 @@ const leadUpdate = async (req, res) => {
   }
 };
 
+//Delete lead
 const leadDelete = async (req, res) => {
   const { id } = req.params;
   try {
@@ -176,12 +177,16 @@ const leadDelete = async (req, res) => {
     const deleatedLead = await leadModel.findByIdAndDelete(id);
 
     if (!deleatedLead) {
-      res.status(404).json(`Lead with this ${id} id not found!`);
+      return res
+        .status(404)
+        .json({ success: false, error: `Lead with this ${id} id not found!` });
     }
 
-    res
-      .status(200)
-      .json({ message: "Lead deleted successfully!", deleatedLead });
+    res.status(200).json({
+      success: true,
+      message: "Lead deleted successfully!",
+      deleatedLead,
+    });
   } catch (error) {
     res
       .status(500)
