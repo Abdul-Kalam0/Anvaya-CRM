@@ -62,7 +62,7 @@ const leadCreation = async (req, res) => {
 };
 
 //get a Lead
-const getLead = async (req, res) => {
+const getLeadById = async (req, res) => {
   const { id } = req.params;
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -230,4 +230,4 @@ const leadDelete = async (req, res) => {
   }
 };
 
-export { leadCreation, getAllLeads, leadUpdate, leadDelete, getLead };
+export { leadCreation, getAllLeads, leadUpdate, leadDelete, getLeadById };

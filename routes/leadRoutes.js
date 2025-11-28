@@ -5,11 +5,12 @@ import {
   getAllLeads,
   leadDelete,
   leadUpdate,
+  getLeadById,
 } from "../controllers/leadControllers.js";
 
 router.post("/leads", leadCreation);
 router.get("/leads", getAllLeads);
-router.get("/leads/:id", getLead)
+router.get("/leads/:id", getLeadById);
 router.put("/leads/:id", leadUpdate);
 router.delete("/leads/:id", leadDelete);
 
