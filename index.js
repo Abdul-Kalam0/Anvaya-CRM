@@ -9,7 +9,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173", // local dev (Vite)
-      "https://anvaya-crm-frontend-001.vercel.app", // production frontend
+      "https://anvaya-crm-001.vercel.app", // production frontend
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
