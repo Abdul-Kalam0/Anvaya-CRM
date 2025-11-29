@@ -1,4 +1,5 @@
 import salesAgentModel from "../models/salesAgent.model.js";
+import mongoose from "mongoose";
 
 const createAgent = async (req, res) => {
   const { name, email } = req.body;
@@ -70,4 +71,41 @@ const getAllSalesAgent = async (req, res) => {
   }
 };
 
-export { createAgent, getAllSalesAgent };
+//delete agent
+const deleteAgent = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Validate ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        error: `❌ Invalid Agent ID: ${id}`,
+      });
+    }
+
+    // Delete record
+    const deletedAgent = await salesAgentModel.findByIdAndDelete(id);
+
+    if (!deletedAgent) {
+      return res.status(404).json({
+        success: false,
+        error: `⚠️ No agent found with ID: ${id}`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "🗑 Agent deleted successfully!",
+      deletedAgent,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "🚨 Internal Server Error",
+      details: error.message,
+    });
+  }
+};
+
+export { createAgent, getAllSalesAgent, deleteAgent };
